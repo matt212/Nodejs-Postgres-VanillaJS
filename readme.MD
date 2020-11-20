@@ -54,4 +54,6 @@
 
 >*`bash ./app/utils/serverSetup/secondarySetup.sh`*
 
+**app run**
+>*`npm run app or yarn app `*
 
