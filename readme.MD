@@ -49,6 +49,7 @@
 
 **app setup**
 > **node,postgres, redis and app dependencies  installation**
+
 >*`bash ./app/utils/serverSetup/primarySetup.sh`*
 
 >*`bash ./app/utils/serverSetup/secondarySetup.sh`*
