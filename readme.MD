@@ -43,10 +43,13 @@
 
 >*`bash ./app/utils/serverSetup/primarySetup.sh`*
 
-**app setup**
-> **node and postgres**
->*`bash ./app/utils/serverSetup/primarySetup.sh`*
+   
+>*`Please note if you have node/postgres/server installed in your instance/machine`*
+*`just comment out in primarySetup.sh file and then run this file `*
 
+**app setup**
+> **node,postgres, redis and app dependencies  installation**
+>*`bash ./app/utils/serverSetup/primarySetup.sh`*
 
 >*`bash ./app/utils/serverSetup/secondarySetup.sh`*
 
