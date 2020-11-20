@@ -57,3 +57,10 @@
 **app run**
 >*`npm run app or yarn app `*
 
+**app usage**
+
+>*`goto localhost:3009/employees`*
+
+>*`username : krennic and  password:orson`*
+
+
