@@ -180,7 +180,8 @@ $(function () {
   baseloadsegments.populateaxiskeys();
   htmlpopulate.htmlpopulatetableheader();
   htmlpopulate.htmlpopulatemodal();
-
+  //for test/
+  baseloadsegments.initialdatatableload();
   $("#tooglecheck1 input").change(function () {
     if ($(this).is(":checked")) {
       $(this)
@@ -614,7 +615,7 @@ let reqops = {
     $("#btnbutton").click();
   },
   btnSubmit: function () {
-    var $fields = $("input:text, input:hidden, input:checkbox, select").not(
+    var $fields = $("input:text, input:hidden, input:checkbox:checked, select").not(
       "[name^='__']"
     );
     var data = $fields.formToJSON();
@@ -849,7 +850,7 @@ let multiselect = {
             '<div><a class="highlightselect" href=\'javascript:multiselect.onsearchtext("' +
             fieldid +
             '","' +
-            obj[fieldname].toLowerCase() +
+            obj[fieldname].toString().toLowerCase() +
             '","' +
             obj[fieldid].toString().toLowerCase() +
             "\");'>" +
@@ -927,6 +928,9 @@ let multiselect = {
     } else {
       // ADD
       basesearchobj[key] = internar;
+      // basesearchobj[key] = {
+      //   isArray: true
+      // }
       basesearchar.push(basesearchobj);
 
       basesearchobj = {};
@@ -986,6 +990,27 @@ let multiselect = {
 
       //return true;
     });
+  },
+  removeFromArray: function (key, val) {
+    var interncon = basesearchar;
+    interncon = interncon
+      .filter(function (e) {
+        return e[key] != undefined;
+      })
+      .map(function (doctor) {
+        return {
+          [key]: doctor[key].remByVal(val)
+        };
+      });
+
+    this.updateNameById(basesearchar, key, interncon[0][key]);
+
+    // if (interncon[0][key].length <= 0) {
+    //   basesearchar = datatransformutils.removeJsonAttrs(basesearchar, [key]);
+    // }
+    basesearchar = basesearchar.filter(
+      value => Object.keys(value).length !== 0
+    );
   }
 };
 /*Modular html populate content for all modules*/
@@ -1037,15 +1062,15 @@ let htmlpopulate = {
       "<div>" +
       "<label>" +
       this.baseCheckbox
-      //'<input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value=true> Remember me' +
-      "</label>" +
+    //'<input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value=true> Remember me' +
+    "</label>" +
       "</div>" +
       "</div>" +
       "</div>";
 
     $("#overlaycontent").html(htmlcontent + chkcontent);
   },
-  baseCheckbox:`<div class="checkbox tablechk">
+  baseCheckbox: `<div class="checkbox tablechk">
    <label>
    <input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value=true> Remember me
    <span class="checkbox-material">
@@ -1498,6 +1523,24 @@ var baseobjvalidation = {
       $(argument).removeAttr("data-form-type");
     }
   },
+  mobilevalidation: function (argument) {
+    validation = new RegExp(validations["mobile"][0]);
+    // validate the email value against the regular expression
+
+    if (!validation.test(argument.value)) {
+      $(argument)
+        .parent()
+        .find("label")
+        .attr("class", "control-label-format");
+      $(argument).attr("data-form-type", "true");
+    } else {
+      $(argument)
+        .parent()
+        .find("label")
+        .attr("class", "hide");
+      $(argument).removeAttr("data-form-type");
+    }
+  },
   passwordvalidation: function (argument) {
     validation = new RegExp(validations["password_set1"][0]);
     // validate the email value against the regular expression
@@ -1575,11 +1618,14 @@ var baseobjvalidation = {
 /*page load functions*/
 let baseloadsegments = {
   initialdatatableload: function () {
-    filterparam.pageno = base.pageno;
-    filterparam.pageSize = base.pageSize;
+    filterparam.pageno = 0;
+    filterparam.pageSize = 20;
     filterparam.ispaginate = true;
+    filterparam.searchparam = "NA";
+    filterparam.colsearch = "createdAt";
+    filterparam.datecolsearch = base.datecolsearch;
     base.datapayload = filterparam;
-
+    console.log(base.datapayload)
     basefunction()
       .getpaginatesearchtype(base)
       .then(function (argument) {
@@ -1708,9 +1754,18 @@ let baseloadsegments = {
       placeholder: "Select date field",
       allowClear: true
     });
+    $('#seldatefields').val('created_date'); // Select the option with a value of 'US'
+    $('#seldatefields').trigger('change');
   },
-  basePopulateMultiControls:function(key)
-  {
+  basePopulateMultiControlsPopulate: function (validationmap, keys) {
+    return validationmap.filter(function (doctor) {
+      return doctor.inputtypemod == keys; // if truthy then keep item
+    }).map(function (doctor) {
+      return doctor.inputtypeVal
+    })[0];
+
+  },
+  basePopulateMultiControls: function (key) {
     return {
       "searchparam": [
         {
@@ -1801,6 +1856,27 @@ let datatransformutils = {
       ars.push(parseInt((a -= 1)));
     });
     return ars;
+  },
+  addArrayinJson: function (filterparam, key, val) {
+    var a = []
+    a.push(val)
+    var o = {}
+    o[key] = a
+    var filt = filterparam.filter(function (dr) {
+      return Object.keys(dr).find(x => x == key)
+    }
+    )
+    if (filt.length > 0) {
+      filterparam = filt.map(function (dr) {
+        dr[key].push(val)
+        return dr
+      })
+    }
+    else {
+      filterparam.push(o)
+    }
+
+    return filterparam
   }
 };
 const equijoin = (xs, ys, primary, foreign, sel) => {
@@ -1892,13 +1968,29 @@ $.fn.formToJSON = function () {
       if (!o[id].push) {
         o[id] = [o[id]];
       }
-      o[id].push(v);
+
+      if (v.includes("[")) {
+        v = isNaN(parseInt(v)) ? v : parseInt(v)
+        o[id].push(JSON.parse(v)[0]);
+      }
+      else {
+        o[id].push(v);
+      }
+
     } else {
-      o[id] = v;
+
+      if (v.includes("[")) {
+        v = isNaN(parseInt(v)) ? v : parseInt(v)
+        o[id] = JSON.parse(v);
+      }
+      else {
+        o[id] = v;
+      }
     }
   };
 
   var pushLevel = function (o, list, v) {
+
     var id = list.shift();
     if (list.length == 0) {
       pushValue(o, id, v);
@@ -1913,6 +2005,7 @@ $.fn.formToJSON = function () {
   this.each(function (i, f) {
     var v = cleanValue($(f));
     var idList = f.id.replace(/:\d*/g, "").split(".");
+
     pushLevel(out, idList, v);
   });
   return out;
@@ -1940,26 +2033,4 @@ let cartesianProduct = function (arr) {
   );
 };
 
-/*prototype*/
 
-let cntrlmultiselect = function () {
-  this.ar = [];
-};
-cntrlmultiselect.prototype.getval = function () {
-  return this.ar;
-};
-cntrlmultiselect.prototype.setval = function (obj) {
-  this.ar.push(obj);
-  return true;
-};
-cntrlmultiselect.prototype.destroy = function (obj) {
-  this.ar = [];
-  return true;
-};
-cntrlmultiselect.prototype.oninput = function (obj) {
-  console.log(obj);
-  return true;
-};
-
-let re = new cntrlmultiselect();
-/**/

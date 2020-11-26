@@ -83,8 +83,10 @@ let searchparampayload = req => {
 
         interns.forEach((item, index) => {
           //console.log(item[Object.keys(item)]+"--"+Object.keys(item))
-          var searchvalue = item[Object.keys(item)];
+          var searchvalue = item[Object.keys(item)[0]];
           var searchkey = Object.keys(item)[0];
+          var isBaseArray= item.isArray 
+          
           //var result = (typeof searchvalue === 'number');
 
           var coltype = "";
@@ -97,44 +99,79 @@ let searchparampayload = req => {
             stringtype = "'";
           }
 
-          var obj;
+          
           if (selector == "") {
-            //selector = "and " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
-            selector =
-              "and " +
-              coltype +
-              "(a." +
-              SqlString.format(searchkey) +
-              ") IN " +
-              "(" +
-              stringtype +
-              SqlString.format(
-                searchvalue.join("" + stringtype + "," + stringtype + "")
-              ) +
-              "" +
-              stringtype +
-              ")";
-            consolidatesearchparams =
-              "(" + SqlString.format(searchvalue).join(" & ") + ")";
+            
+            if (isBaseArray) {
+              console.log("arrays")
+              console.log(searchvalue)
+              //ARRAY[5,7] && modnameid;
+              selector =
+                "and ARRAY [" +
+                SqlString.format(searchvalue) +
+                "] && " +
+                "" +
+                SqlString.format(searchkey) +
+                "";
+              console.log(selector)
+
+            }
+            else {
+              console.log("here")
+              //selector = "and " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
+              selector =
+                "and " +
+                coltype +
+                "(a." +
+                SqlString.format(searchkey) +
+                ") IN " +
+                "(" +
+                stringtype +
+                SqlString.format(
+                  searchvalue.join("" + stringtype + "," + stringtype + "")
+                ) +
+                "" +
+                stringtype +
+                ")";
+              consolidatesearchparams =
+                "(" + SqlString.format(searchvalue).join(" & ") + ")";
+            }
+
           } else {
             consolidatesearchparams =
               consolidatesearchparams + " & " + SqlString.format(searchvalue);
             //selector = selector + " and  " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
-            selector =
-              selector +
-              " and  " +
-              coltype +
-              "(a." +
-              SqlString.format(searchkey) +
-              ") IN " +
-              "(" +
-              stringtype +
-              SqlString.format(
-                searchvalue.join("" + stringtype + "," + stringtype + "")
-              ) +
-              "" +
-              stringtype +
-              ")";
+            if (isBaseArray) {
+              console.log("arrays")
+              console.log(searchvalue)
+              //ARRAY[5,7] && modnameid;
+              selector = selector +
+                "and  ARRAY [" +
+                SqlString.format(searchvalue) +
+                "] && " +
+                "" +
+                SqlString.format(searchkey) +
+                "";
+
+            }
+            else {
+              selector =
+                selector +
+                " and  " +
+                coltype +
+                "(a." +
+                SqlString.format(searchkey) +
+                ") IN " +
+                "(" +
+                stringtype +
+                SqlString.format(
+                  searchvalue.join("" + stringtype + "," + stringtype + "")
+                ) +
+                "" +
+                stringtype +
+                ")";
+            }
+
           }
 
           // finale.push(obj)
@@ -169,7 +206,8 @@ let searchparampayload = req => {
     base.ispaginate = ispaginate;
     base.searchtype = searchtype;
     base.consolidatesearch = consolidatesearch;
-
+    
+    console.log(base.selector)
     resolve(base);
   });
   return promise.catch(function (error) {
@@ -418,25 +456,75 @@ let paramsSearchTypeGroupBy = req => {
         //console.log(item[Object.keys(item)]+"--"+Object.keys(item))
         var searchvalue = item[Object.keys(item)];
         searchkey = Object.keys(item)[0];
-
+        var coltype = "";
+        var stringtype = "";
+        var stringCasting="";
+        console.log(searchvalue);
+        if(isNaN(searchvalue))
+        {
+          coltype = "lower";
+          stringtype = "'";
+        }
+        else
+        {
+          coltype = "";
+          stringtype = "";
+          stringCasting=" ::TEXT"
+        }
+        
         var obj;
         if (selector == "") {
-          selector =
-            " lower(" +
-            SqlString.format(searchkey) +
-            ") LIKE " +
+          
+          if (searchvalue.constructor === Array) {
+            console.log("arrays")
+            console.log(searchvalue)
+            //ARRAY[5,7] && modnameid;
+            selector =
+              "ARRAY [" +
+              SqlString.format(searchvalue) +
+              "] && " +
+              "" +
+              SqlString.format(searchkey) +
+              "";
+
+          }
+          else
+          {
+            selector =
+            `${coltype}( ` +
+            SqlString.format(searchkey) +`${stringCasting}`+
+            " ) LIKE " +
             "'" +
             SqlString.format(searchvalue) +
             "%'";
+          }
         } else {
-          selector =
+          if (searchvalue.constructor === Array) {
+            console.log("arrays")
+            console.log(searchvalue)
+            //ARRAY[5,7] && modnameid;
+            selector = selector +
+              "ARRAY [" +
+              SqlString.format(searchvalue) +
+              "] && " +
+              "" +
+              SqlString.format(searchkey) +
+              "";
+            console.log(selector)
+
+          }
+          else
+          {
+            selector =
             selector +
-            " and  lower(" +
-            SqlString.format(searchkey) +
+            `${coltype}(` +
+            SqlString.format(searchkey) +`${stringCasting}`+
             ") LIKE " +
             "'" +
             SqlString.format(searchvalue) +
             "%'";
+          }
+          
         }
 
         // finale.push(obj)
@@ -824,7 +912,7 @@ let pageRender = (req, res, validationConfig) => {
     title: req.user,
     serverdate: serverdat,
     modelattribute: Object.keys(models[mod.Name].tableAttributes),
-    validationmap: JSON.stringify(validationConfig.validationmap),
+    validationmap: JSON.stringify(datatransformutils.removeJsonAttrs(validationConfig.validationmap, ["fieldtypename"])),
     applyfields: JSON.stringify(validationConfig.applyfields)
   });
 };
@@ -832,7 +920,7 @@ let pageRender = (req, res, validationConfig) => {
 let searchtype = (req, res, a) => {
 
   searchparampayload(req).then(arg => {
-
+console.log(arg)
     var fieldnames = Object.keys(models[mod.Name].tableAttributes).toString();
 
     let sqlConstructParams = {
@@ -1062,6 +1150,26 @@ let isCacheCount = (key, sqlstatementsecondary) => {
     })
   })
 }
+let searchtypegroupbyId = (req, res, a) => {
+  let tempDep = paramsSearchTypeGroupBy(req);
+  let sqlConstructParams = {
+    tempDep,
+    mod
+  };
+
+  var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupbyId](
+    sqlConstructParams
+  );
+
+  connections
+    .query(sqlstatementsprimary)
+    .then(result => {
+      res.json({ rows: result.rows });
+    })
+    .catch(err => {
+      res.json(err);
+    });
+};
 let SearchTypeGroupBy = (req, res, a) => {
   let tempDep = paramsSearchTypeGroupBy(req);
   let sqlConstructParams = {
@@ -1106,8 +1214,9 @@ let createRecord = (req, res) => {
       res.json({ createdId: x[mod.id] });
     },
     err => {
+      console.log(err)
       res.status(412);
-      resp.par = "pre condition failed";
+      resp.par = err;
       res.json(resp);
     }
   );
@@ -1615,6 +1724,13 @@ let pivotResult = (req, res, a) => {
     }
   );
 };
+Array.prototype.arrayRemove = function (value) {
+
+  return this.filter(function (ele) {
+    return ele != value;
+  });
+
+}
 Array.prototype.removear = function () {
   var what,
     a = arguments,
@@ -1636,6 +1752,7 @@ let routeUrls = {
   update: "/api/update",
   searchtype: ["/api/load", "/api/searchtype"],
   searchtypegroupby: "/api/searchtypegroupby",
+  searchtypegroupbyId: "/api/searchtypegroupbyId",
   delete: "/api/delete",
   pivotresult: "/api/pivotresult",
   bulkCreate: "/api/bulkCreate"
@@ -1644,11 +1761,75 @@ let routeUrls = {
 // }).catch(e => {
 //     console.log(e)
 // })
+let datatransformutils = {
+  findAndRemove: function (array, property, value) {
+    array.forEach(function (result, index) {
+      if (result[property] === value) {
+        //Remove from array
+        array.splice(index, 1);
+      }
+    });
+  },
+  rename: function (obj, oldName, newName) {
+    if (!obj.hasOwnProperty(oldName)) {
+      return false;
+    }
+
+    obj[newName] = obj[oldName];
+    delete obj[oldName];
+    return true;
+  },
+  removeJsonAttrs: function (json, attrs) {
+    return JSON.parse(
+      JSON.stringify(json, function (k, v) {
+        return attrs.indexOf(k) !== -1 ? undefined : v;
+      })
+    );
+  },
+  isNumberKey: function (evt) {
+    var charCode = evt.which ? evt.which : evt.keyCode;
+    if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
+      return false;
+
+    return true;
+  },
+  getminusincrement: function (a, b) {
+    var ars = [];
+    var N = parseInt(a - b);
+    var ar = [...Array(N).keys()];
+    ar.forEach(function (element) {
+      ars.push(parseInt((a -= 1)));
+    });
+    return ars;
+  },
+  addArrayinJson: function (filterparam, key, val) {
+    var a = []
+    a.push(val)
+    var o = {}
+    o[key] = a
+    var filt = filterparam.filter(function (dr) {
+      return Object.keys(dr).find(x => x == key)
+    }
+    )
+    if (filt.length > 0) {
+      filterparam = filt.map(function (dr) {
+        dr[key].push(val)
+        return dr
+      })
+    }
+    else {
+      filterparam.push(o)
+    }
+
+    return filterparam
+  }
+};
 let baseUtilsRoutes = {
   sqlScriptRow: "searchType",
   sqlScriptCount: "searchTypeCount",
   searchTypeCountExplain: "searchTypeCountExplain",
   searchtypegroupby: "searchtypegroupby",
+  searchtypegroupbyId: "searchtypegroupbyId",
   searchTypeFilter: "searchTypeFilter",
   searchTypeFilterProgressBar: "searchTypeFilterProgressBar",
   sqlstatementsprimaryPivot: "sqlstatementsprimaryPivot",
@@ -1677,6 +1858,7 @@ module.exports = {
   exportExcel,
   createRecord,
   SearchTypeGroupBy,
+  searchtypegroupbyId,
   searchtype,
   searchtypePerf,
   pageRender

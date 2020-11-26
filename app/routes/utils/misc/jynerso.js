@@ -49,27 +49,31 @@ let pgcreateDb = function () {
 
 
 }
+let addbaseRoutes = function (arr, keys, vals) {
+  arr = JSON.parse(arr)
+  if (arr.filter(item => item.val == vals).length == 0) {
+    arr.push({ val: vals, key: keys });
+  }
+  return arr;
+}
 
 router.post("/jedha", function (req, res) {
 
 
   var mainapp = req.body;
-  applyMultiControls(mainapp).then(function (data) {
-    res.json({ a: "a" })
-  })
-  // applymodel(mainapp)
-  //   .then(applyApp)
-  //   .then(applyroutes)
-  //   .then(applyserverValidationConfig)
-  //   .then(swaggerdocs)
-  //   //.then(applyclientJS)
-  //   .then(applyMultiControls)
-  //   .then(applyhtml)
-  //   .then(createdb)
-  //   .then(function (data) {
-  //     pgcreateDb();
-  //     res.json({ a: "a" })
-  //   })
+
+  applymodel(mainapp)
+    .then(applyApp)
+    .then(applyroutes)
+    .then(applyserverValidationConfig)
+    .then(swaggerdocs)
+    .then(applyMultiControls)
+    .then(applyhtml)
+    .then(createdb)
+    .then(function (data) {
+      pgcreateDb();
+      res.json({ a: "a" })
+    })
 
 });
 
@@ -97,10 +101,13 @@ function applyMultiControls(mainapp) {
     })
     console.log(based.length)
     if (based.length <= 1) {
-      var currentMod = "let currentMod{modulename}=\"{modulename}\""
-      var currentModId = "let currentMod{modulenameid}=\"{modulenameid}\""
+      var baseMod = `let current{Modname}={
+        name:"{name}",
+        id:"{id}",
+        text:"{text}",
+      };`
       //definition
-      var currentInitialization = "getcurrentMod{modulename}groupby: '/' + currentMod{modulename} + '/api/searchtypegroupby/',"
+      var currentInitialization = "getcurrentMod{modulename}groupby: '/' + current{modulename}.name + '/api/searchtypegroupbyId/',"
       //initialization
 
       //implementation
@@ -113,53 +120,81 @@ function applyMultiControls(mainapp) {
           return argument;
       })
     },`
+      var onchkscaffolding = `onMultiControlChk: function (data) {
+        // var key = $(data).data().key;
+        // var val = $(data).data().value;
+        // var filterparam={}
+        // console.log($(data)[0].checked)
+        // if ($(data)[0].checked) {
+    
+        //   filterparam=datatransformutils.addArrayinJson(basesearchar,key,val)
+        //   multiselect.updateNameById(basesearchar, key, filterparam[0][key]);  
+        // }
+        // else {
+        //   multiselect.removeFromArray(key,val)
+        // }
+        // console.log(basesearchar)
+  },`
+      var baseOffLoad = `$(function () {
+    basemod_modal.modalpopulate()
+    $(".form-horizontal input:text").on("keydown keyup change", function () {
+      var sel = $('.form-horizontal input:text[data-form-type]').length;
+      if (sel <= 0) {
+        $('#btnmodalsub').prop('disabled', false)
+      } else {
+        $('#btnmodalsub').prop('disabled', true)
+      }
+    })
+  })`
+      var checkboxCode = `if (element.inputtype == "checkbox" && element.inputtypemod==current{Modname}.name) {
+  basefunction().{Modname}MultiKeysLoad(current{Modname}.text).then(function (data) {
+    data.rows.forEach((elem, index) => {
+      $("#overlaycontent").append(\`<div class="checkbox tablechk">
+      <label><input type="checkbox" id="cltrl\${currentmodname.id}" 
+      onclick="javascript:basemod_modal.onMultiControlChk(this)" 
+      data-key="\${current{Modname}.id}"
+      data-val="[\${elem[currentmodname.id]}]"  
+      value="[\${elem[current{Modname}.id]}]">\${elem[current{Modname}.text]}
+      <span class="checkbox-material"><span class="check"></span></span></label></div>\`)
+    })
+  });
+}`
 
-
-      var a = ""
-      var b = ""
       var c = ""
       var d = ""
       var e = ""
       mainapp[0].server_client.forEach(element => {
         //server_client.forEach(element => {
-
         if (element.inputtype != "textbox") {
-          filters=filters.replace("multiselect",element.inputtype)
-          multiControlsScripts=multiControlsScripts.replace("//inputType","\n //inputType \n" +filters)
-          if (a == "") {
-            a = currentMod.replace(/{modulename}/g, element.inputtypemod)
-            b = currentModId.replace(/{modulenameid}/g, element.inputtypeID)
+          multiControlsScripts = multiControlsScripts.replace("//onchkcapture", "\n " + onchkscaffolding)
+          baseMod = baseMod.replace(/{Modname}/g, element.inputtypemod)
+          baseMod = baseMod.replace(/{name}/g, element.inputtypemod)
+          baseMod = baseMod.replace(/{id}/g, element.inputtypeID)
+          baseMod = baseMod.replace(/{text}/g, element.inputtypeVal)
+          checkboxCode = checkboxCode.replace(/{Modname}/g, element.inputtypemod)
+          multiControlsScripts = multiControlsScripts.replace("//checkboxCode", "\n " + checkboxCode)
+          appsgenerator = appsgenerator.replace("//definition", "\n " + baseMod)
+          if (c == "") {
             c = currentInitialization.replace(/{modulename}/g, element.inputtypemod)
             d = currentImplementation.replace(/{modulename}/g, element.inputtypemod)
-            d = currentImplementation.replace(/{modulename}/g, element.inputtypemod)
             e = groupbyControlsPopulate(element.inputtypemod)
-            
-            
-
           }
           else {
-            a = a + "\n" + currentMod.replace(/{modulename}/g, element.inputtypemod)
-            b = b + "\n" + currentModId.replace(/{modulenameid}/g, element.inputtypeID)
             c = c + "\n" + currentInitialization.replace(/{modulename}/g, element.inputtypemod)
             d = d + "\n" + currentImplementation.replace(/{modulename}/g, element.inputtypemod)
             e = e + "\n" + groupbyControlsPopulate(element.inputtypemod)
-          
           }
-
-
-
-
         }
-
       })
-      if (a != "") {
-        appsgenerator = appsgenerator.replace(/definition/g, "\n" + a + "\n" + b);
+      if (c != "") {
+        appsgenerator = appsgenerator.replace(/definition/g, "\n" + baseMod);
         appsgenerator = appsgenerator.replace(/initialization/g, "\n" + c);
         appsgenerator = appsgenerator.replace(/implementation/g, "\n" + d);
         appsgenerator = appsgenerator.replace(/groupBySets/g, "\n" + e);
+        appsgenerator = appsgenerator.replace(/baseOffLoad/g, "\n" + baseOffLoad);
         var replaces = `let basemod_modal = {afterhtmlpopulate: function() {}}`
-        
-        appsgenerator = appsgenerator.replace(replaces, "\n" + multiControlsScripts);
+
+        appsgenerator = appsgenerator.replace(replaces, "\n" + (beautify(multiControlsScripts, { indent_size: 2 })));
       }
     }
 
@@ -197,9 +232,7 @@ let groupbyControlsPopulate = function (modname) {
   groupbyControlsPopulate = groupbyControlsPopulate.replace(`getpaginatesearchtypegroupby`, `getcurrentMod${modname}groupby`)
   return groupbyControlsPopulate
 }
-var filters=`if (element.inputtype == "multiselect") {
-  //codehere
-}`
+
 var multiControlsScripts = `let basemod_modal = {
   modalpopulate: function() {
     var interset = validationmap
@@ -211,15 +244,15 @@ var multiControlsScripts = `let basemod_modal = {
         htmlcontent += \`<div class=\"row\">\`
         item.forEach2(function(element) {
 
-             //inputType
+             //checkboxCode
              else {
                 htmlcontent += \`<div class="form-group overlaytxtalign col-md-5">
                     <div class="col-sm-15">
-                    <label class="lblhide" id="lblmsg\${element.inputtextval}">
+                    <label class="lblhide" id="lblmsg\${element.inputname}">
                     <i class="fa fa-bell-o"></i> Input with warning
                     </label>
-                    <input type="text" data-attribute="' + element.fieldvalidatename + '" class="form-control" maxLength="\${element.fieldmaxlength}"
-                    data-form-type="false" onkeyup="javascript:reqops.formvalidation(this)" id="cltrl' + element.inputtextval + '" placeholder="\${element.inputplaceholder.capitalize()}">
+                    <input type="text" data-attribute="\${element.fieldvalidatename}" class="form-control" maxLength="\${element.fieldmaxlength}"
+                    data-form-type="false" onkeyup="javascript:reqops.formvalidation(this)" id="cltrl\${element.inputname}" placeholder="\${element.inputplaceholder.capitalize()}">
                     </div></div>\`;
             }
 
@@ -239,6 +272,7 @@ var multiControlsScripts = `let basemod_modal = {
 
     $("#overlaycontent").html(htmlcontent + chkcontent);
 },
+//onchkcapture
 baseCheckbox:\`<div class="checkbox tablechk">
    <label>
    <input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value=true> Remember me
@@ -268,10 +302,15 @@ baseCheckbox:\`<div class="checkbox tablechk">
          formatresponse.forEach2(function(data) {
 
              if (data.inputtype == "textbox") {
-                 $("#cltrl" + data.inputtextval).val(data.vals)
-                 $("#cltrl" + data.inputtextval).removeAttr('data-form-type');
-             }  else if (data.inputtype == "multiselect") {
-
+                 $("#cltrl" + data.inputname).val(data.vals)
+                 $("#cltrl" + data.inputname).removeAttr('data-form-type');
+             }  else if (data.inputtype == "checkbox") {
+              $(\`#overlaycontent .checkbox.tablechk [type="checkbox"]\`).each(function (index) {
+                $(this).attr("checked", false)
+              })
+              data.vals.forEach(function (dr) {
+                $(\`#overlaycontent .checkbox.tablechk  [data-val='\${dr}']\`).attr("checked", true)
+              })
                 
              }
          })
@@ -293,19 +332,17 @@ baseCheckbox:\`<div class="checkbox tablechk">
 
          var res = this.formatserverfieldmap(data)
         
-         var result = equijoin(res, validationmap, "key", "inputtextval",
-             ({
-                 vals
-             }, {
-                 inputtype,
-                 inputtextval,
-                 inputname
-             }) => ({
-                 inputtype,
-                 inputtextval,
-                 inputname,
-                 vals
-             }));
+         var result = equijoin(res, validationmap, "key", "inputname",
+      ({
+        vals
+      }, {
+        inputtype,
+        inputname
+      }) => ({
+        inputtype,
+        inputname,
+        vals
+      }));
 
          return result;
      },
@@ -315,8 +352,8 @@ baseCheckbox:\`<div class="checkbox tablechk">
          var res = data.map(function(data) {
              return applyfield.map(function(da) {
 
-                 var y = (data[da].indexOf(',') != -1 ? data[da].split(',') : data[da]);
-
+                 //var y = (data[da].indexOf(',') != -1 ? data[da].split(',') : data[da]);
+                 var y = data[da]
                  return {
                      key: da,
                      vals: y
@@ -353,20 +390,10 @@ function applyhtml(mainapp) {
 }
 function applyroutes(mainapp) {
   return new Promise((resolve, reject) => {
-    var appsgenerator = fs.readFileSync('../utils/app.js', 'utf8');
-    var filename = mainapp[0].datapayloadModulename
-
-    var geti = "app.use('/" + filename + "', " + filename + ");"
-    var interns = geti + '\n/*routesecondary*/';
-
-    appsgenerator = appsgenerator.replace('/*routesecondary*/', interns);
-
-    var secondinterns = "let " + filename + "= require(\'../routes/" + filename.trim() + "\');";
-    var terinterns = secondinterns + '\n/*routeprimary*/'
-
-    appsgenerator = appsgenerator.replace('/*routeprimary*/', terinterns);
-    fs.writeFile('../utils/app.js', appsgenerator, function (err, data) {
-
+    var appsgenerator = fs.readFileSync('../config/baseRoute.json', 'utf8');
+    console.log(mainapp[0].datapayloadModulename)
+    appsgenerator = addbaseRoutes(appsgenerator, mainapp[0].datapayloadModulename, mainapp[0].datapayloadModulename)
+    fs.writeFile('../config/baseRoute.json', (beautify(JSON.stringify(appsgenerator), { indent_size: 2 })), function (err, data) {
       resolve(mainapp)
     })
   })

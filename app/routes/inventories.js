@@ -1,11 +1,9 @@
 let dep = require("./utils/dependentVariables.js");
 const router = dep.express.Router();
 
-let mod = Object.assign(
-  {},
-  {
-    Name: "employees",
-    id: "employeesid",
+let mod = Object.assign({}, {
+    Name: "inventories",
+    id: "inventoriesid",
     type: "base"
   },
   dep.baseUtilsRoutes
@@ -53,9 +51,8 @@ router.post(
   dep.authfunctions.validateAccesstoken,
 
   (req, res) => {
-    
     dep.assignVariables(mod);
-    dep.searchtype(req, res, mod);
+    dep.searchtypePerf(req, res, mod);
     //  const used = process.memoryUsage().heapUsed / 1024 / 1024;
   }
 );

@@ -56,8 +56,8 @@
     let basechange = function (data) {
         var ids = $(data).data()["animalType"]
         if ($(data).val() == "textbox") {
-            
-            
+
+
             $("#fieldtype_" + ids).val('STRING')
             $("#validation_" + ids).val('string')
         }
@@ -127,7 +127,7 @@
             ddlclientfieldtype.forEach(function (element) {
                 re += '<option>' + element + '</option>'
             });
-            re += '</td><td><input id="textbox_' + rowCount + '" name = "DynamicTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><input name = "placeholderTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><select name="" id="fieldtype_' + rowCount + '" class="formcom bredalpha"><option>STRING</option><option>INTEGER</option><option>boolean</option><option>DATE</option></select></td><td><select name="" id="validation_' + rowCount + '" class="formcom bredbeta">';
+            re += '</td><td><input id="textbox_' + rowCount + '" name = "DynamicTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><input name = "placeholderTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><select name="" id="fieldtype_' + rowCount + '" class="formcom bredalpha"><option>ARRAY(DataTypes.INTEGER)</option><option>BIGINT</option><option>STRING</option><option>INTEGER</option><option>boolean</option><option>DATE</option></select></td><td><select name="" id="validation_' + rowCount + '" class="formcom bredbeta">';
             regex.forEach(function (element) {
                 re += '<option>' + element + '</option>'
             });
@@ -145,13 +145,12 @@
 
 
                 internobj.inputtype = $(this.cells[0]).find('option:selected').text().trim()
-                if(internobj.inputtype!="textbox")
-                {
-                internobj.inputtypemod = $(this.cells[1]).find('option:selected').text().trim()
-                internobj.inputtypeVal = $(this.cells[2]).find('option:selected').text().trim()
-                internobj.inputtypeID = internobj.inputtypemod+"id"
+                if (internobj.inputtype != "textbox") {
+                    internobj.inputtypemod = $(this.cells[1]).find('option:selected').text().trim()
+                    internobj.inputtypeVal = $(this.cells[2]).find('option:selected').text().trim()
+                    internobj.inputtypeID = internobj.inputtypemod + "id"
                 }
-                
+
                 internobj.inputname = $(this.cells[3]).find('input').val().trim()
                 internobj.inputplaceholder = $(this.cells[4]).find('input').val().trim()
                 internobj.fieldtypename = $(this.cells[5]).find('option:selected').text().trim()
@@ -228,8 +227,51 @@
     }
     function base_server() {
         var non_multiserver_client = [{ "inputtype": "textbox", "inputname": "firstname", "inputplaceholder": "meh", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "lastname", "inputplaceholder": "last name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "age", "inputplaceholder": "age", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "phone", "inputplaceholder": "mobile", "fieldtypename": "INTEGER", "fieldvalidatename": "mobile", "fieldmaxlength": "80" }]
-        var server_client = [{ "inputtype": "textbox", "inputname": "firstname", "inputplaceholder": "meh", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "lastname", "inputplaceholder": "last name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "age", "inputplaceholder": "age", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "phone", "inputplaceholder": "mobile", "fieldtypename": "INTEGER", "fieldvalidatename": "mobile", "fieldmaxlength": "80" }, { "inputtype": "radio", "inputtypemod": "mrole", "inputtypeVal": "rolename", "inputtypeID": "mroleid", "inputname": "mroleid", "inputplaceholder": "Gender", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }]
-        var swagger = [{ "type": "string", "fieldname": "firstname", "example": "sample text" }, { "type": "string", "fieldname": "lastname", "example": "sample text" }, { "type": "integer", "fieldname": "age", "format": "int64", "example": true }, { "type": "integer", "fieldname": "phone", "format": "int64", "example": true }]
+        var server_client = [{
+            "inputtype": "textbox",
+            "inputname": "firstname",
+            "inputplaceholder": "meh",
+            "fieldtypename": "STRING",
+            "fieldvalidatename": "string",
+            "fieldmaxlength": "80"
+        }, {
+            "inputtype": "textbox",
+            "inputname": "lastname",
+            "inputplaceholder": "last name",
+            "fieldtypename": "STRING",
+            "fieldvalidatename": "string",
+            "fieldmaxlength": "80"
+        }, {
+            "inputtype": "textbox",
+            "inputname": "age",
+            "inputplaceholder": "age",
+            "fieldtypename": "INTEGER",
+            "fieldvalidatename": "number",
+            "fieldmaxlength": "80"
+        }, {
+            "inputtype": "textbox",
+            "inputname": "phone",
+            "inputplaceholder": "mobile",
+            "fieldtypename": "BIGINT",
+            "fieldvalidatename": "mobile",
+            "fieldmaxlength": "80"
+        }, {
+            "inputtype": "checkbox",
+            "inputtypemod": "modname",
+            "inputtypeVal": "mname",
+            "inputtypeID": "modnameid",
+            "inputname": "modnameid",
+            "inputplaceholder": "Gender",
+            "fieldtypename": "ARRAY(DataTypes.INTEGER)",
+            "fieldvalidatename": "number",
+            "fieldmaxlength": "80"
+        }]
+        var swagger = [{ "type": "string", "fieldname": "firstname", "example": "sample text" }, { "type": "string", "fieldname": "lastname", "example": "sample text" }, { "type": "integer", "fieldname": "age", "format": "int64", "example": true }, { "type": "integer", "fieldname": "phone", "format": "int64", "example": true },{
+	"type": "array",
+	"fieldname": "modnameid",
+	"format": "array",
+	"example": [1,2]
+}]
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}
         ajaxbase.method = "jedha"

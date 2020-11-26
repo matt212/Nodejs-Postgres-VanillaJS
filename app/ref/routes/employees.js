@@ -67,7 +67,14 @@ router.post(
     dep.SearchTypeGroupBy(req, res, mod);
   }
 );
-
+router.post(
+  dep.routeUrls.searchtypegroupbyId,
+  dep.authfunctions.validateAccesstoken,
+  (req, res) => {
+    dep.assignVariables(mod);
+    dep.searchtypegroupbyId(req, res, mod);
+  }
+);
 router.post(
   dep.routeUrls.delete,
   dep.authfunctions.validateAccesstoken,

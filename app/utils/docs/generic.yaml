@@ -23,7 +23,7 @@ definitions:
       datecolsearch:
         type: string
         format: string
-        example: birth_date
+        example: created_date
       pageno:
         type: integer
         format: int64

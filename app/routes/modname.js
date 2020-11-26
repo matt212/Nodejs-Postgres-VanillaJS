@@ -9,7 +9,14 @@ let mod = Object.assign(
   },
   dep.baseUtilsRoutes
 );
-
+router.post(
+  dep.routeUrls.searchtypegroupbyId,
+  dep.authfunctions.validateAccesstoken,
+  (req, res) => {
+    dep.assignVariables(mod);
+    dep.searchtypegroupbyId(req, res, mod);
+  }
+);
 router.get("/", dep.authfunctions.validateAccesstoken, (req, res) => {
   dep.assignVariables(mod);
   let validationConfig = require("./utils/" +

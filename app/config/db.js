@@ -47,7 +47,7 @@ var connectionpool = {
     idleTimeoutMillis: 1000, // how long a client is allowed to remain idle before being closed
     multipleStatementResult: true,
     logging: false
-    
+
 };
 
 //this initializes a connection pool
@@ -81,6 +81,7 @@ pool.on('remove', function (err) {
 const QueryStream = require('pg-query-stream')
 
 module.exports.pgQueryStream = function (sql) {
+    console.log(sql)
     return new Promise((resolve, reject) => {
         var all = [];
         pool.connect(function (err, client, done) {
@@ -114,8 +115,7 @@ module.exports.pgQueryStream = function (sql) {
 
 
 module.exports.query = function (sql) {
-
-console.log(sql)
+    console.log(sql)
     return new Promise((resolve, reject) => {
         pool.connect(function (err, client, release) {
             if (err) {

@@ -13,12 +13,12 @@ var routes = require("../routes/index");
 var jwt = require("jsonwebtoken");
 var config = require("../config/config.json"); // get our config file
 /*routeprimary*/
-var employees = require("../routes/employees");
-var modname = require("../routes/modname");
-var muser = require("../routes/muser");
-var role = require("../routes/role");
-var mrole = require("../routes/mrole");
-var userrole = require("../routes/userrole");
+// var employees = require("../routes/employees");
+// var modname = require("../routes/modname");
+// var muser = require("../routes/muser");
+// var role = require("../routes/role");
+// var mrole = require("../routes/mrole");
+// var userrole = require("../routes/userrole");
 
 /* IN ORDER TO AVOID MAX_ALLOWED ERROR 
 GOTO C:\ProgramData\MySQL\MySQL Server 5.7
@@ -143,14 +143,16 @@ app.post("/authenticate/", function (req, res) {
 
 require("../routes/auth/authRoutes")(app, passport);
 app.use("/login", routes);
-app.use("/", routes);
 
-app.use("/employees", employees);
-app.use("/modname", modname);
-app.use("/muser", muser);
-app.use("/role", role);
-app.use("/mrole", mrole);
-app.use("/userrolemapping", userrole);
+app.use("/", routes);
+let baseroutes=require('../config/baseRoute')
+baseroutes.forEach(function(dt)
+{  
+ app.use(`/${dt.val}`,require(`../routes/${dt.val}`));
+})
+//let employees = require("../routes/employees");
+//app.use("/employees", employees);
+
 /*routesecondary*/
 
 var jynerso = require("../routes/utils/misc/jynerso");
@@ -210,7 +212,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //})
 
 app.disable('x-powered-by');
-
+//uncomment to apply column modifications
+var models=require("../models/")
+models.sequelize.sync({alter:true}).then(function() {
+})
 /*models.sequelize.sync({alter:true}).then(function() {*/
 app.set("port", process.env.PORT || 3009);
 var server = app.listen(app.get("port"), function () {

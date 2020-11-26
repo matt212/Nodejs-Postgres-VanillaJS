@@ -79,6 +79,28 @@ let base = {
       "  limit 20"
     );
   },
+  searchtypegroupbyId: function (tunnel) {
+    return (
+      "select  a." +
+      tunnel.tempDep.searchkey +
+      ",a." +
+      tunnel.mod.id +
+      " from " +
+      tunnel.mod.Name +
+      " as a where  " +
+      tunnel.tempDep.selector +
+      " " +
+      tunnel.tempDep.colmetafilter +
+      " group by " +
+      tunnel.tempDep.searchkey +", "+
+      tunnel.mod.id +
+      "  ORDER BY " +
+      tunnel.tempDep.searchkey +
+      " " +
+      tunnel.tempDep.sortcolumnorder +
+      "  limit 20"
+    );
+  },
   SqlPivot: function (tunnel) {
     return (
       "select " +
