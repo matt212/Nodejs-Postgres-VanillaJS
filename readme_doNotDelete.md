@@ -174,3 +174,6 @@ sudo kill $(sudo lsof -t -i:3009)
 
 > postgres useful commands !
 > * https://zaiste.net/postgresql_primer_for_busy_people/
+
+>**********************Important notice for complex muti control form**
+for create complex file like multi checkbox for complex multi control use respective module file for insert , update and delete *do not use modular code from baseutils inherit it and use it in module js files"
