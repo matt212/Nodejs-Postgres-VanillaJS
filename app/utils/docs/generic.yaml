@@ -158,7 +158,7 @@ definitions:
   searchBase:
     type: object
     properties:
-      searchbase:
+      searchparam:
         type: string
         format: string
         example: NA

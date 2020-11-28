@@ -148,7 +148,7 @@ module.exports = function (passport) {
                 where: { username: username, password: password },
                 attributes: ['email', 'username', 'muserid'],
             }).then(function (user) {
-
+console.log(user);
                 if (user == undefined) {
 
                     return done(null, false, req.flash('loginMessage', 'Invalid Username/Password'));

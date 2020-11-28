@@ -119,15 +119,17 @@
                 re += '<option>' + element + '</option>'
             });
             re += '</td><td><select name="" class="formcom bredter" data-animal-type=' + rowCount + ' onchange="javascript:onmodelchange(this)">';
-            killzones.forEach(function (element) {
+                re += '<option>--Please Select Table --</option>'
+                killzones.forEach(function (element) {
                 re += '<option>' + element + '</option>'
             });
 
             re += '</td><td><select id="childname_' + rowCount + '" name="" class="formcom bredter">';
+            re += '<option>--Please Select FieldType --</option>'    
             ddlclientfieldtype.forEach(function (element) {
                 re += '<option>' + element + '</option>'
             });
-            re += '</td><td><input id="textbox_' + rowCount + '" name = "DynamicTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><input name = "placeholderTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><select name="" id="fieldtype_' + rowCount + '" class="formcom bredalpha"><option>ARRAY(DataTypes.INTEGER)</option><option>BIGINT</option><option>STRING</option><option>INTEGER</option><option>boolean</option><option>DATE</option></select></td><td><select name="" id="validation_' + rowCount + '" class="formcom bredbeta">';
+            re += '</td><td><input id="textbox_' + rowCount + '" name = "DynamicTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><input name = "placeholderTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><select name="" id="fieldtype_' + rowCount + '" class="formcom bredalpha"><option>STRING</option><option>INTEGER</option><option>BIGINT</option><option>boolean</option><option>ARRAY(DataTypes.INTEGER)</option><option>DATE</option></select></td><td><select name="" id="validation_' + rowCount + '" class="formcom bredbeta">';
             regex.forEach(function (element) {
                 re += '<option>' + element + '</option>'
             });
@@ -138,6 +140,7 @@
         }
         var arintern = []
         $("#btnAddsss").button().click(function () {
+            
             arintern = []
             $('table tbody tr.parent').each(function (index) {
                 var internobj = {}
@@ -179,12 +182,14 @@
                 internobj = {}
             });
             var swaggerJson = arintern.map(function (doctor) {
+                console.log(doctor)
                 var o = {}
-                if (doctor.fieldtypename == "date") {
+                if (doctor.fieldtypename == "DATE") {
                     o.type = "string";
                     o.fieldname = doctor.inputname;
                     o.format = "date-time";
-                    o.example = new date();
+                    var exampledt=new Date();
+                    o.example =exampledt.toString() 
                 }
                 else if (doctor.fieldtypename == "boolean") {
                     o.type = doctor.fieldtypename;
@@ -195,7 +200,13 @@
                     o.type = "integer";
                     o.fieldname = doctor.inputname;
                     o.format = "int64";
-                    o.example = true;
+                    o.example = 20;
+                }
+                else if (doctor.fieldtypename == "ARRAY(DataTypes.INTEGER)") {
+                    o.type = "array";
+                    o.fieldname = doctor.inputname;
+                    o.format = "array";
+                    o.example = [1, 2];
                 }
                 else {
 
@@ -255,23 +266,31 @@
             "fieldtypename": "BIGINT",
             "fieldvalidatename": "mobile",
             "fieldmaxlength": "80"
-        }, {
-            "inputtype": "checkbox",
-            "inputtypemod": "modname",
-            "inputtypeVal": "mname",
-            "inputtypeID": "modnameid",
-            "inputname": "modnameid",
-            "inputplaceholder": "Gender",
-            "fieldtypename": "ARRAY(DataTypes.INTEGER)",
-            "fieldvalidatename": "number",
-            "fieldmaxlength": "80"
-        }]
-        var swagger = [{ "type": "string", "fieldname": "firstname", "example": "sample text" }, { "type": "string", "fieldname": "lastname", "example": "sample text" }, { "type": "integer", "fieldname": "age", "format": "int64", "example": true }, { "type": "integer", "fieldname": "phone", "format": "int64", "example": true },{
-	"type": "array",
-	"fieldname": "modnameid",
-	"format": "array",
-	"example": [1,2]
-}]
+        }
+        // , {
+        //     "inputtype": "checkbox",
+        //     "inputtypemod": "modname",
+        //     "inputtypeVal": "mname",
+        //     "inputtypeID": "modnameid",
+        //     "inputname": "modnameid",
+        //     "inputplaceholder": "Gender",
+        //     "fieldtypename": "ARRAY(DataTypes.INTEGER)",
+        //     "fieldvalidatename": "number",
+        //     "fieldmaxlength": "80"
+        // }
+    ]
+        var swagger = [{ "type": "string", "fieldname": "firstname", "example": "sample text" }, { "type": "string", "fieldname": "lastname", "example": "sample text" }, { "type": "integer", "fieldname": "age", "format": "int64", "example": true }, { "type": "integer", "fieldname": "phone", "format": "int64", "example": true } 
+        // ,{
+        //     "type": "array",
+        //     "fieldname": "modnameid",
+        //     "format": "array",
+        //     "example": [1, 2]
+        // }
+    ]
+        // var server_client=$("#jsonatt1").val();
+        // var swagger=$("#jsonatt2").val();
+        console.log(swagger);
+        console.log(server_client);
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}
         ajaxbase.method = "jedha"
@@ -279,6 +298,7 @@
             datapayloadModulename,
             server_client, swagger
         }]
+        console.log(ajaxbase.payload)
         ajaxutils.basepostmethod(ajaxbase).then(function (data) {
             console.log(data)
         })

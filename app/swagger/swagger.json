@@ -35,7 +35,7 @@
         "description": "",
         "operationId": "employeesLoad",
         "produces": [
-          "application/json"
+          "application/json;charset=utf-8"
         ],
         "parameters": [
           {
@@ -72,7 +72,7 @@
         "description": "",
         "operationId": "employeesSearchtype",
         "produces": [
-          "application/json"
+          "application/json;charset=utf-8"
         ],
         "parameters": [
           {
@@ -109,7 +109,7 @@
         "description": "",
         "operationId": "employeesCreate",
         "produces": [
-          "application/json"
+          "application/json;charset=utf-8"
         ],
         "parameters": [
           {
@@ -143,7 +143,7 @@
         "description": "",
         "operationId": "employeesUpdate",
         "produces": [
-          "application/json"
+          "application/json;charset=utf-8"
         ],
         "parameters": [
           {
@@ -177,7 +177,7 @@
         "description": "",
         "operationId": "employeesSearchtypegroupby",
         "produces": [
-          "application/json"
+          "application/json;charset=utf-8"
         ],
         "parameters": [
           {
@@ -236,7 +236,7 @@
         "description": "",
         "operationId": "employeesDelete",
         "produces": [
-          "application/json"
+          "application/json;charset=utf-8"
         ],
         "parameters": [
           {
@@ -270,7 +270,7 @@
         "description": "",
         "operationId": "employeesPivot",
         "produces": [
-          "application/json"
+          "application/json;charset=utf-8"
         ],
         "parameters": [
           {

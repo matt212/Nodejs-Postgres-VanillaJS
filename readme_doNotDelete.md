@@ -47,7 +47,14 @@
 > * `sudo apt-get remove nodejs`
 > * `sudo apt-get remove npm`
 > * `sudo apt purge nodejs`
+> * `sudo apt purge npm`
 > * `sudo apt-get update`
+> * `sudo rm /usr/bin/node or sudo rm /usr/ocal/bin/node`
+
+> **upgrading node**
+> * `npm install -g n`
+> * `n stable`
+
 >**uninstall redis**
 > *`sudo apt-get purge --auto-remove redis-server`
 > **uninstall postgresql**
@@ -175,5 +182,33 @@ sudo kill $(sudo lsof -t -i:3009)
 > postgres useful commands !
 > * https://zaiste.net/postgresql_primer_for_busy_people/
 
+>>**for scaffolding**
+> **server side**
+> * update routes in `app/utils/app.js`
+> * create folder with modname and create validationConfig.js in 
+> *    `app/routes/utils/{modname}/validationConfig.js`
+> * create routes filename with modname with {modname and modnameid}
+> *    `app/routes/{modname}.js`
+> * create models for modname in 
+> *    `app/models/{modname}.js`
+> * create swagger .yml in 
+> *  `app/utils/swagger/docs/{modname}.js `
+>> **for scaffolding client side**
+> * create js file for client side modname  in   
+> *    `app/public/app_{modname}.js`
+> * create html file in  in 
+> *    `app/view/{modname}/{modname}.html`
+
+
 >**********************Important notice for complex muti control form**
 for create complex file like multi checkbox for complex multi control use respective module file for insert , update and delete *do not use modular code from baseutils inherit it and use it in module js files"
+
+
+Steps for using scaffolding
+1.for createing new table just select textbox and enter , new table would be created along with swagger and whole nine yards.
+2.for using radio , checkbox used textbox first time to create table and use its dbtable when you want use radio button in form when it is intended. 
+like for e.g 
+for including sex radio button in in recruits form
+first create sex table in db by inputting sex in fresh scaffolding
+and use swagger to input data or form 
+and then you can select from sex as dbtable while creating recruits form as fresh install

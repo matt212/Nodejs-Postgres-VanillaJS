@@ -1426,7 +1426,7 @@ let streamingexportexcel = internobj => {
     });
     stream.on("end", () => {
       // console.log('stream end')
-      stream.close();
+      
       stream.destroy();
       resolve(internobj);
       connections.release()
