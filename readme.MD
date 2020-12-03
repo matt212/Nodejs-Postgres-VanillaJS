@@ -43,7 +43,7 @@
 *  ### `Automated Swagger for each Module created By build in scaffoding`
 ![redlime](app/video/gif/d.gif)
 
-* ### `basic dashboard operation`
+* ### `Basic dashboard operation`
 
 ![redlime](app/video/gif/a1.gif)
 
