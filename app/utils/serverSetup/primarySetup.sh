@@ -5,6 +5,7 @@ sudo apt install npm
 #Postgres
 sudo apt-get update
 sudo apt install postgresql postgresql-contrib
+sudo service postgresql restart
 #Redis-server
 sudo apt install redis-server
 sudo service redis-server start
