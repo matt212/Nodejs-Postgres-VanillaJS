@@ -32,18 +32,20 @@
 >*`select birthdate from dropdown and select date range any from 1982 to till date`*
 
 
-
-
-* ### `basic dashboard operation`
-
-![redlime](app/video/gif/a.gif)
-
-* ### `dynamic pivot operation with highchart implementation`
+* ### `Dynamic pivot operation with highchart implementation`
 
 ![redlime](app/video/gif/b.gif)
 
 *  ### `Node.js stream based CSV download for 1000k from PostgresSQL with socket.io as progress feature`
 ![redlime](app/video/gif/c.gif)
+
+
+*  ### `Automated Swagger for each Module created By build in scaffoding`
+![redlime](app/video/gif/d.gif)
+
+* ### `basic dashboard operation`
+
+![redlime](app/video/gif/a.gif)
 
 
 **Custom fractural pattern based app** :
