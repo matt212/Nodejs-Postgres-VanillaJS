@@ -4,7 +4,7 @@ const swaggerDefinition = {
   info: {
     title: 'REST API for my Nodejs Postgres VanillaJS ', // Title of the documentation
     version: '1.0.0', // Version of the app
-    description: 'Below one can find list of APIs and its request and response structure', // short description of the app
+    description: 'Below one can find Different Modules with its respective list of APIs and its request and response structure', // short description of the app
   },
   host: 'localhost:3009', // the host or url of the app
   basePath: '/', // the basepath of your endpoint
