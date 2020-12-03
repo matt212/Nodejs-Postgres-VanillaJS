@@ -34,10 +34,10 @@
 
 * ### `Dynamic pivot operation with highchart implementation`
 
-![redlime](app/video/gif/b.gif)
+![redlime](app/video/gif/b2.gif)
 
 *  ### `Node.js stream based CSV download for 1000k from PostgresSQL with socket.io as progress feature`
-![redlime](app/video/gif/c.gif)
+![redlime](app/video/gif/c1.gif)
 
 
 *  ### `Automated Swagger for each Module created By build in scaffoding`
@@ -45,7 +45,7 @@
 
 * ### `basic dashboard operation`
 
-![redlime](app/video/gif/a.gif)
+![redlime](app/video/gif/a1.gif)
 
 
 **Custom fractural pattern based app** :
