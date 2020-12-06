@@ -546,7 +546,7 @@ let reqops = {
       $("#uploadfiles").val("");
       $("#uploadsave").show();
       $("#uploadsavemsg").show();
-      $("#uploadsaveddl").attr("data-toggle", "dropdown");
+      $("#notificationsid").show();
       $("#uploadsavemsg").html("Data processing in progress !");
 
       setintervalparams.id = setInterval(frame, 750);
@@ -664,7 +664,7 @@ let reqops = {
 
         $("#uploadsave").show();
         $("#uploadsavemsg").show();
-        $("#uploadsaveddl").attr("data-toggle", "dropdown");
+        $("#notificationsid").show();
         $("#uploadsavemsg").html("Preparing for download !");
         setintervalparams.id = setInterval(frame, 750);
 
