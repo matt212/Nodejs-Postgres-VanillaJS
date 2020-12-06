@@ -51,7 +51,7 @@ let searchparampayload = req => {
     if (startdate != undefined && enddate != undefined) {
       //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
       daterange =
-        "" +
+        "and " +
         "a." +
         datecolsearch +
         " >= '" +
@@ -63,6 +63,9 @@ let searchparampayload = req => {
         enddate +
         "'";
     }
+    if (reqcontent.disableDate) {
+      daterange = " ";
+     }
 
     if (
       reqcontent.sortcolumnorder == undefined &&
